@@ -1,32 +1,32 @@
-<script lang="ts" setup>
-import type { ICard } from '@/main';
-import router from '@/router';
-import type { PropType } from 'vue';
-
-defineProps({
-  item: {
-    type: Object as PropType<ICard>,
-    required: true
-  }
-})
-
-function goToItem(id: number) {
-  router.push(`/items/${id}`);
-}
-</script>
-
 <template>
   <div class="card text-center card-product">
     <div class="card-product__img">
-      <img class="card-img" :src="item.image" :alt="item.city">
+      <img class="card-img" :src="`/images/${item.image}`" :alt="item.title">
     </div>
     <div class="card-body">
-      <p>{{ item.contry }}</p>
-      <a class="btn" @click="goToItem(item.id)">
-        <h4 class="card-product__title">{{ item.city }}</h4>
-      </a>
-      <p class="card-product__price">{{ item.price }}</p>
-      <p><button type="button" class="btn btn-primary">Заказать</button></p>
+      <p>{{ item.country }}</p>
+      <RouterLink :to="`/items/${item.id}`" class="btn">
+        <h4 class="card-product__title">{{ item.title }}</h4>
+      </RouterLink>
+      <p class="card-product__price">{{ item.price.toLocaleString('ru') }} руб</p>
+      <p><button type="button" class="btn btn-primary" @click="addItem(item)">Заказать</button></p>
     </div>
   </div>
 </template>
+
+<script lang="ts" setup>
+import type { ICardWithCountry } from '@/types';
+import type { PropType } from 'vue';
+import { RouterLink } from 'vue-router';
+import { useCartStore } from '@/store/cart';
+
+const cartStore = useCartStore();
+const {addItem} = cartStore
+
+defineProps({
+  item: {
+    type: Object as PropType<ICardWithCountry>,
+    required: true
+  }
+})
+</script>

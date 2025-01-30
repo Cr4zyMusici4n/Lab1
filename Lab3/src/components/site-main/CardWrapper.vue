@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-  import type { ICard } from "@/main";
+import type { ICardWithCountry } from "@/types";
 import Card from "./Card.vue";
   
 defineProps({
   items: {
-    type: Array<ICard>,
+    type: Array<ICardWithCountry>,
     required: true
   }
 })
@@ -16,7 +16,7 @@ defineProps({
     <div class="card-grid">
     
       <Card 
-        v-for = 'item of items'
+        v-for="item of items"
         :key="item.id" :item="item"
        />
 

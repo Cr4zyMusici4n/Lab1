@@ -1,36 +1,39 @@
 <script lang="ts" setup>
 import Main from '@/components/site-main/Main.vue';
-import type { ICard } from '@/main';
+import type { ICard, ICardWithCountry, ICountry } from '@/types';
+import { computed, onBeforeMount, ref } from 'vue';
 
-const cardArr: ICard[] = [
-  { id: 1,
-    contry: 'Россия',
-    city: 'Москва',
-    price: '200 000 руб',
-    image: '/images/moscow.jpg'
-   },
-  { id: 2,
-    contry: 'Франция',
-    city: 'Париж',
-    price: '150 000 руб',
-    image: '/images/paris.jpg'
-   },
-  { id: 3,
-    contry: 'Тайланд',
-    city: 'Бангкок',
-    price: '50 000 руб',
-    image: '/images/bangkok.jpg'
-   },
-  { id: 4,
-    contry: 'Тайланд',
-    city: 'Пхукет',
-    price: '60 000 руб',
-    image: '/images/phuket.jpg'
-   },
-]
+const cardArr = ref<ICard[]>([]);
+const countryArr = ref<ICountry[]>([]);
+
+const cardsWithCountry = computed(() => {
+  if (cardArr.value.length === 0 || countryArr.value.length === 0) {
+    return [];
+  }
+  return cardArr.value.map<ICardWithCountry>((item) => {
+    return { ...item, country: countryArr.value.find((country) => item.countryId === country.id)?.title ?? '' }
+  })
+})
+
+onBeforeMount(async () => {
+  const response = await fetch('http://localhost:3000/items')
+  if (!response.ok) {
+    console.error('Failed to fetch items data');
+    return;
+  }
+  cardArr.value = await response.json()
+})
+
+onBeforeMount(async () => {
+  const response = await fetch('http://localhost:3000/countries')
+  if (!response.ok) {
+    console.error('Failed to fetch countries data');
+    return;
+  }
+  countryArr.value = await response.json()
+}) 
 </script>
 
 <template>
-  <Main :items="cardArr" />
+  <Main :items="cardsWithCountry" />
 </template>
-
