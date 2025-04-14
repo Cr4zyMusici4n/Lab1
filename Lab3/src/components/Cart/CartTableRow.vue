@@ -1,6 +1,6 @@
 <template>
   <tr>
-    <th scope="row">{{ index }}</th>
+    <th scope="row">{{ index + 1 }}</th>
     <td>{{ item.item.title }}</td>
     <td>{{ item.item.price.toLocaleString('ru') }} руб</td>
     <td><input type="number" class="form-control cart-number" :value="item.count" min="1"
