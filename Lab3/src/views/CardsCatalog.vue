@@ -5,6 +5,8 @@ import { computed, onBeforeMount, ref } from 'vue';
 
 const cardArr = ref<ICard[]>([]);
 const countryArr = ref<ICountry[]>([]);
+const apiUrl = import.meta.env.VITE_API_URL;
+
 
 const cardsWithCountry = computed(() => {
   if (cardArr.value.length === 0 || countryArr.value.length === 0) {
@@ -16,7 +18,7 @@ const cardsWithCountry = computed(() => {
 })
 
 onBeforeMount(async () => {
-  const response = await fetch('http://localhost:3000/items')
+  const response = await fetch(`${apiUrl}/items`)
   if (!response.ok) {
     console.error('Failed to fetch items data');
     return;
@@ -25,7 +27,7 @@ onBeforeMount(async () => {
 })
 
 onBeforeMount(async () => {
-  const response = await fetch('http://localhost:3000/countries')
+  const response = await fetch(`${apiUrl}/countries`)
   if (!response.ok) {
     console.error('Failed to fetch countries data');
     return;

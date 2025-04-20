@@ -29,7 +29,9 @@ import { useRoute } from 'vue-router'
 import { useCartStore } from '@/store/cart';
 
 const cartStore = useCartStore();
-const { addItem } = cartStore
+const { addItem } = cartStore;
+const apiUrl = import.meta.env.VITE_API_URL;
+
 
 const route = useRoute()
 const item = ref<ICardWithCountry | null>(null);
@@ -40,7 +42,7 @@ const itemDescription = computed<string | undefined>(() => {
 
 onMounted(async () => {
   const id = route.params.id
-  const cardResponse = await fetch(`http://localhost:3000/items/${id}`)
+  const cardResponse = await fetch(`${apiUrl}/items/${id}`)
 
   if (!cardResponse.ok) {
     console.error('Failed to fetch item data');
@@ -49,7 +51,7 @@ onMounted(async () => {
 
   const itemData: ICardWithCountry = await cardResponse.json();
 
-  const countryResponse = await fetch(`http://localhost:3000/countries/${itemData.country_id}`)
+  const countryResponse = await fetch(`${apiUrl}/countries/${itemData.country_id}`)
   if (!countryResponse.ok) {
     console.error('Failed to fetch item data');
     return;

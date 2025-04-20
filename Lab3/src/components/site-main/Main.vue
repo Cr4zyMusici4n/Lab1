@@ -1,18 +1,30 @@
 <script setup lang="ts">
 import type { ICardWithCountry } from "@/types";
 import CardWrapper from "./CardWrapper.vue";
-import { computed, ref } from "vue";
+import { ref, onMounted, watch } from "vue";
 
-const props = defineProps<{ items: ICardWithCountry[] }>();
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const search = ref('');
 const country = ref('0');
+const filteredItems = ref<ICardWithCountry[]>([]);
 
-const filteredItems = computed<ICardWithCountry[]>(() => {
-  if (!search.value && country.value === '0') return props.items;
-  if (search.value && country.value === '0') return props.items.filter((item) => item.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase()));
-  return props.items.filter((item) => item.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase()) && (country.value === item.countryId))
-})
+const fetchFilteredItems = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/items/filter?search=${search.value}&country=${country.value}`);
+    const data = await response.json();
+    filteredItems.value = data;
+  } catch (error) {
+    console.error('Ошибка при получении данных:', error);
+  }
+};
+
+watch([search, country], () => {
+  fetchFilteredItems();
+});
+
+onMounted(() => {
+  fetchFilteredItems();
+});
 </script>
 
 <template>
@@ -56,14 +68,13 @@ const filteredItems = computed<ICardWithCountry[]>(() => {
               <div class="input-group">
                 <input v-model="search" type="text" class="form-control" placeholder="Название города">
                 <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" type="button" id="button-addon2">Искать</button>
+                  <button class="btn btn-outline-secondary" type="button" @click="fetchFilteredItems">Искать</button>
                 </div>
               </div>
             </div>
           </div>
 
           <CardWrapper :items="filteredItems" />
-
         </div>
       </div>
     </div>
