@@ -13,7 +13,7 @@
             <b>Длительность:</b>
             {{ item.duration }} дней
           </p>
-          <div class="card-product__description" v-html="item.description">
+          <div class="card-product__description" v-html="itemDescription">
           </div>
           <p><button type="button" class="btn btn-primary" @click="addItem(item)">Заказать</button></p>
         </div>
@@ -24,7 +24,7 @@
 
 <script lang="ts" setup>
 import type { ICardWithCountry, ICountry } from '@/types';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCartStore } from '@/store/cart';
 
@@ -32,7 +32,11 @@ const cartStore = useCartStore();
 const { addItem } = cartStore
 
 const route = useRoute()
-const item = ref<ICardWithCountry | null>(null)
+const item = ref<ICardWithCountry | null>(null);
+
+const itemDescription = computed<string | undefined>(() => {
+  return item.value?.description.replace(/\\n/g, '<br />')
+})
 
 onMounted(async () => {
   const id = route.params.id
@@ -45,7 +49,7 @@ onMounted(async () => {
 
   const itemData: ICardWithCountry = await cardResponse.json();
 
-  const countryResponse = await fetch(`http://localhost:3000/countries/${itemData.countryId}`)
+  const countryResponse = await fetch(`http://localhost:3000/countries/${itemData.country_id}`)
   if (!countryResponse.ok) {
     console.error('Failed to fetch item data');
     return;

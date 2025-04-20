@@ -11,7 +11,7 @@ const cardsWithCountry = computed(() => {
     return [];
   }
   return cardArr.value.map<ICardWithCountry>((item) => {
-    return { ...item, country: countryArr.value.find((country) => item.countryId === country.id)?.title ?? '' }
+    return { ...item, country: countryArr.value.find((country) => item.country_id === country.id)?.title ?? '' }
   })
 })
 
