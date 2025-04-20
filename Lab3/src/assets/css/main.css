@@ -25,6 +25,10 @@ body{
     top: -2px;
 }
 
+.container {
+    gap: 20px;
+}
+
 .site-main{
     margin-top: 80px;
 }
